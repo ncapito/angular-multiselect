@@ -7,28 +7,9 @@
    * @description
    * # Angular Multi Select directive
    */
-  ng.module('shalotelli-angular-multiselect', ['shalotelli-angular-multiselect.templates'])
-    .provider('multiSelectConfig', function MultiSelectConfig () {
-      var defaults = {
-        templatePath: '/directives/multi-select.html',
-        otherField: 'isOther',
-        otherNgModel: 'other',
-        closeOnSelect: false
-      };
+  ng.module('shalotelli-angular-multiselect', ['shalotelli-angular-multiselect.templates', 'pasvaz.bindonce']);
 
-      /**
-       * Set defaults
-       * @param {Object} settings Settings object
-       */
-      this.setDefaults = function setDefaults (settings) {
-        angular.extend(defaults, settings || {});
-      };
-
-      this.$get = [ function () {
-        return defaults;
-      }];
-    })
-    .directive('multiSelect', [ 'multiSelectConfig', '$timeout', '$log',  function multiSelect (multiSelectConfig, $timeout, $log) {
+  ng.module('shalotelli-angular-multiselect').directive('multiSelect', [ 'multiSelectConfig', '$timeout', '$log',  function multiSelect (multiSelectConfig, $timeout, $log) {
       return {
         templateUrl: function templateUrl (element, attrs) {
           if (attrs.templatePath !== undefined) {
@@ -61,7 +42,6 @@
         link: function multiSelectLink (scope, element, attrs) {
           // dropdown element
           var $dropdown = element.find('.multi-select-dropdown'),
-
              /**
               * Display options in textbox
               * @return {String} Display string

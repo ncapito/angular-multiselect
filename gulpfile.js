@@ -1,3 +1,5 @@
+(function(){
+
 'use strict';
 
 var gulp = require('gulp'),
@@ -10,15 +12,20 @@ var gulp = require('gulp'),
     ngAnnotate = require('gulp-ng-annotate'),
     ngTemplates = require('gulp-ng-templates'),
     concat = require('gulp-concat'),
+    connect = require('gulp-connect'),
     karma = require('karma').server;
 
-var files = {};
+var files = {
+  test : [],
+  css : [ 'styles/multi-select.css'],
+  src : ['release/templates.min.js', 'multiselect.js', 'multiselect.config.js', 'multiselect.v2.js'],
+  templates : ['views/**/*.html'],
+  destination : 'release/',
+  all: function(){
+    return this.css.concat(this.src).concat(this.templates);
+  }
+};
 
-files.test = [];
-files.css = [ 'styles/multi-select.css'];
-files.src = ['release/templates.min.js', 'multiselect.js'];
-files.templates = ['views/**/*.html'];
-files.destination = 'release/';
 
 gulp.task('templates', function () {
   return gulp.src(files.templates)
@@ -74,4 +81,27 @@ gulp.task('clean', function(cb) {
   del([files.destination + 'styles/', files.destination], cb);
 });
 
-gulp.task('default', ['copy', 'scripts']);
+
+gulp.task('connect', function() {
+  connect.server({
+      livereload: true
+  });
+});
+
+gulp.task('reload', function() {
+    gulp.src(['index.html', 'demo/**/*.html'])
+    .pipe(connect.reload());
+});
+
+gulp.task('watch', function () {
+  gulp.watch(files.all().concat(['./demo/**/*.html']), ['build' ]);
+
+  gulp.watch(['demo/**/*.html', 'release/**/*'] , ['reload']);
+});
+
+
+gulp.task('build', ['copy', 'scripts']);
+
+gulp.task('default', ['connect', 'watch']);
+
+})();
